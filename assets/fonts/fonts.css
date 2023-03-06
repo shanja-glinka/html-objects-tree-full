@@ -1,0 +1,47 @@
+@font-face {
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 300;
+    src: url('./latolight.ttf') format('truetype');
+    text-rendering: optimizeLegibility;
+}
+
+@font-face {
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 400;
+    src: url('./latoregular.ttf') format('truetype');
+    text-rendering: optimizeLegibility;
+}
+
+@font-face {
+    font-family: 'Lato';
+    font-style: normal; 
+    font-weight: 500;
+    src: url('./latomedium.ttf') format('truetype');
+    text-rendering: optimizeLegibility;
+}
+
+@font-face {
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 700;
+    src: url('./latobold.ttf') format('truetype');
+    text-rendering: optimizeLegibility;
+}
+
+@font-face {
+    font-family: 'Caveat';
+    font-style: normal;
+    font-weight: 400;
+    src: url('./Caveat-Regular.ttf') format('truetype');
+    text-rendering: optimizeLegibility;
+}
+
+@font-face {
+    font-family: 'Caveat';
+    font-style: normal;
+    font-weight: 700;
+    src: url('./Caveat-Bold.ttf') format('truetype');
+    text-rendering: optimizeLegibility;
+}
