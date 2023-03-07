@@ -48,7 +48,8 @@ ul {
   border-radius: 12px;
   padding: 10px 0;
 }
-.group-tree-container .group-item {
+.group-tree-container .group-item,
+.group-tree-container .group-item-add {
   position: relative;
   -webkit-user-select: none;
      -moz-user-select: none;
@@ -57,7 +58,8 @@ ul {
   position: relative;
   display: block;
 }
-.group-tree-container .group-item::after {
+.group-tree-container .group-item::after,
+.group-tree-container .group-item-add::after {
   content: "";
   position: absolute;
   left: 0;
@@ -66,26 +68,44 @@ ul {
   background: rgba(100, 100, 100, 0.226);
   height: 1px;
 }
-.group-tree-container .group-item:last-child::after {
+.group-tree-container .group-item:last-child::after,
+.group-tree-container .group-item-add:last-child::after {
   box-shadow: none;
   background: none;
 }
-.group-tree-container .group-item .group-title {
+.group-tree-container .group-item .group-title,
+.group-tree-container .group-item-add .group-title {
+  position: relative;
   display: flex;
   padding: 15px;
   gap: 20px;
+  padding-left: 45px;
 }
-.group-tree-container .group-item .sub-group {
+.group-tree-container .group-item .sub-group,
+.group-tree-container .group-item-add .sub-group {
   display: none;
   margin: 10px;
   margin-left: 72px;
   background-color: rgba(151, 151, 151, 0.1568627451);
   border-radius: 12px;
 }
-.group-tree-container .group-item .sub-group.active {
+.group-tree-container .group-item .sub-group.active,
+.group-tree-container .group-item-add .sub-group.active {
   display: block !important;
 }
 
+.group-title::before {
+  content: "";
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: url("../img/icons/Minus.svg");
+  background-size: cover;
+  width: 18px;
+  height: 18px;
+  opacity: 0.2;
+}
 .group-title i {
   display: inline-block;
   cursor: pointer;
@@ -110,32 +130,34 @@ ul {
   background: none;
   opacity: 0.2;
 }
-.group-title i.icon-default::after {
+.group-title i.icon-default::after, .group-title i.icon-plus::after, .group-title i.icon-drop-down::after, .group-title i.icon-check::after, .group-title i.icon-close::after {
   content: "";
   position: absolute;
-  background: url("../img/icons/Minus.svg");
-  background-size: cover;
   width: 18px;
   height: 18px;
 }
+.group-title i.icon-default::after {
+  background: url("../img/icons/Minus.svg");
+  background-size: cover;
+}
 .group-title i.icon-plus::after {
-  content: "";
-  position: absolute;
   background: url("../img/icons/Plus.svg");
   background-size: cover;
-  width: 18px;
-  height: 18px;
+}
+.group-title i.icon-check::after {
+  background: url("../img/icons/Check.svg");
+  background-size: cover;
+}
+.group-title i.icon-close::after {
+  background: url("../img/icons/Close.svg");
+  background-size: cover;
 }
 .group-title i.icon-drop-down {
   margin-left: auto;
 }
 .group-title i.icon-drop-down::after {
-  content: "";
-  position: absolute;
   background: url("../img/icons/Plus.svg");
   background-size: cover;
-  width: 18px;
-  height: 18px;
 }
 .group-title i.toggled.icon-drop-down::after {
   background: url("../img/icons/Minus.svg");
@@ -145,6 +167,11 @@ ul {
   font-size: 18px;
   cursor: pointer;
   color: #5c5c5c;
+  margin-right: auto;
+}
+.group-title span.input-view {
+  display: flex;
+  gap: 10px;
 }
 .group-title .group-actions {
   display: flex;
@@ -173,6 +200,19 @@ ul {
   background-size: cover;
 }
 
+.group-item-add .group-title::before {
+  display: none;
+}
+
+.object-tree-process {
+  width: 100%;
+  height: 22px;
+}
+.object-tree-process p {
+  width: 100%;
+  text-align: center;
+}
+
 .tree-drescr {
   min-width: 200px;
   max-width: 200px;
@@ -187,7 +227,16 @@ ul {
 }
 .tree-drescr .item-descr h2 {
   padding-bottom: 15px;
+  word-wrap: normal;
+  overflow: hidden;
 }
 .tree-drescr .item-descr.active {
   display: block;
+}
+.tree-drescr .group-actions {
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
 }/*# sourceMappingURL=styles.css.map */

@@ -61,12 +61,12 @@ ul {
     border-radius: 12px;
     padding: 10px 0;
 
-    .group-item {
+    .group-item,
+    .group-item-add {
         position: relative;
         user-select: none;
         position: relative;
         display: block;
-
 
         &::after {
             content: '';
@@ -86,9 +86,11 @@ ul {
 
 
         .group-title {
+            position: relative;
             display: flex;
             padding: 15px;
-            gap: 20px
+            gap: 20px;
+            padding-left: 45px;
         }
 
         .sub-group {
@@ -109,6 +111,19 @@ ul {
 }
 
 .group-title {
+    &::before {
+        content: '';
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: url('../img/icons/Minus.svg');
+        background-size: cover;
+        width: 18px;
+        height: 18px;
+        opacity: .2;
+    }
+
     i {
         display: inline-block;
         cursor: pointer;
@@ -139,22 +154,36 @@ ul {
             opacity: .2;
         }
 
-        &.icon-default::after {
+        &.icon-default::after,
+        &.icon-plus::after,
+        &.icon-drop-down::after,
+        &.icon-check::after,
+        &.icon-close::after {
             content: '';
             position: absolute;
-            background: url('../img/icons/Minus.svg');
-            background-size: cover;
             width: 18px;
             height: 18px;
         }
 
+        &.icon-default::after {
+
+            background: url('../img/icons/Minus.svg');
+            background-size: cover;
+        }
+
         &.icon-plus::after {
-            content: '';
-            position: absolute;
             background: url('../img/icons/Plus.svg');
             background-size: cover;
-            width: 18px;
-            height: 18px;
+        }
+
+        &.icon-check::after {
+            background: url('../img/icons/Check.svg');
+            background-size: cover;
+        }
+
+        &.icon-close::after {
+            background: url('../img/icons/Close.svg');
+            background-size: cover;
         }
 
         &.icon-drop-down {
@@ -162,12 +191,8 @@ ul {
         }
 
         &.icon-drop-down::after {
-            content: '';
-            position: absolute;
             background: url('../img/icons/Plus.svg');
             background-size: cover;
-            width: 18px;
-            height: 18px;
 
         }
 
@@ -182,6 +207,12 @@ ul {
         font-size: 18px;
         cursor: pointer;
         color: $group-title-color;
+        margin-right: auto;
+
+        &.input-view {
+            display: flex;
+            gap: 10px
+        }
     }
 
 
@@ -217,11 +248,29 @@ ul {
     }
 }
 
+.group-item-add {
+    .group-title {
+        &::before {
+            display: none;
+        }
+    }
+}
+
+.object-tree-process {
+    width: 100%;
+    height: 22px;
+
+    p {
+        width: 100%;
+        text-align: center;
+    }
+}
+
 .tree-drescr {
     min-width: 200px;
     max-width: 200px;
     padding-top: 15px;
-    
+
 
     .item-descr {
         display: none;
@@ -232,14 +281,22 @@ ul {
 
         h2 {
             padding-bottom: 15px;
+            word-wrap: normal;
+            overflow: hidden;
         }
 
-        p {
-
-        }
+        p {}
 
         &.active {
             display: block;
         }
+    }
+
+    .group-actions {
+        padding: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
     }
 }
