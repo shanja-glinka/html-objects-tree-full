@@ -13,7 +13,7 @@ For usage:
 # Usage
 
 Admin:
-```http
+```https
   GET /admin
   GET /index
 ```

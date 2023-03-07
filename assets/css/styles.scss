@@ -1,3 +1,14 @@
+$tree-background: #ebecf0;
+$tree-boxshdow: 0 4px 6px 0 #00000031;
+
+$item-color: #ffffff;
+
+$subgroup-background: #97979728;
+
+$icon-background: #d2d2d2;
+$group-title-color: #5c5c5c;
+
+
 html,
 body {
     font-family: 'Lato';
@@ -12,7 +23,223 @@ p,
 a {
     padding: 0;
     margin: 0;
+}
+
+a {
     text-decoration: none;
-    font-family: 'Lato';
-    font-style: normal;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+.container {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 200px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+
+    .object-tree {
+        display: flex;
+        flex-direction: row-reverse;
+        width: 100%;
+        gap: 20px
+    }
+}
+
+
+.group-tree-container {
+    position: relative;
+    width: 100%;
+    background: $tree-background;
+    box-shadow: $tree-boxshdow;
+    border-radius: 12px;
+    padding: 10px 0;
+
+    .group-item {
+        position: relative;
+        user-select: none;
+        position: relative;
+        display: block;
+
+
+        &::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: -2px;
+            // box-shadow: inset 0 -1px rgba(100, 100, 100, 0.226);
+            background: rgba(100, 100, 100, 0.226);
+            height: 1px;
+        }
+
+        &:last-child::after {
+            box-shadow: none;
+            background: none;
+        }
+
+
+        .group-title {
+            display: flex;
+            padding: 15px;
+            gap: 20px
+        }
+
+        .sub-group {
+            display: none;
+            margin: 10px;
+            margin-left: 72px;
+            background-color: $subgroup-background;
+            border-radius: 12px;
+
+            &.active {
+                display: block !important;
+
+            }
+        }
+
+    }
+
+}
+
+.group-title {
+    i {
+        display: inline-block;
+        cursor: pointer;
+
+        &.icon {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+
+            border-radius: 4px;
+            background-color: $icon-background;
+
+
+            svg {
+                display: block;
+                width: 18px;
+                height: 18px;
+
+                opacity: .7;
+            }
+        }
+
+        &.icon-default {
+            background: none;
+            opacity: .2;
+        }
+
+        &.icon-default::after {
+            content: '';
+            position: absolute;
+            background: url('../img/icons/Minus.svg');
+            background-size: cover;
+            width: 18px;
+            height: 18px;
+        }
+
+        &.icon-plus::after {
+            content: '';
+            position: absolute;
+            background: url('../img/icons/Plus.svg');
+            background-size: cover;
+            width: 18px;
+            height: 18px;
+        }
+
+        &.icon-drop-down {
+            margin-left: auto;
+        }
+
+        &.icon-drop-down::after {
+            content: '';
+            position: absolute;
+            background: url('../img/icons/Plus.svg');
+            background-size: cover;
+            width: 18px;
+            height: 18px;
+
+        }
+
+        &.toggled.icon-drop-down::after {
+            background: url('../img/icons/Minus.svg');
+            background-size: cover;
+        }
+
+    }
+
+    span {
+        font-size: 18px;
+        cursor: pointer;
+        color: $group-title-color;
+    }
+
+
+    .group-actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 10px;
+
+        .icon-edit,
+        .icon-remove {
+            background: none;
+            opacity: .7;
+        }
+
+        .icon-edit::after,
+        .icon-remove::after {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+        }
+
+        .icon-edit::after {
+            background: url('../img/icons/Edit_rectangle.svg');
+            background-size: cover;
+        }
+
+        .icon-remove::after {
+            background: url('../img/icons/Trash_1.svg');
+            background-size: cover;
+        }
+    }
+}
+
+.tree-drescr {
+    min-width: 200px;
+    max-width: 200px;
+    padding-top: 15px;
+    
+
+    .item-descr {
+        display: none;
+        padding: 15px;
+        background-color: $tree-background;
+        box-shadow: $tree-boxshdow;
+        border-radius: 12px;
+
+        h2 {
+            padding-bottom: 15px;
+        }
+
+        p {
+
+        }
+
+        &.active {
+            display: block;
+        }
+    }
 }

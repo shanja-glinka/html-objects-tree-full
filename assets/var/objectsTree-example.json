@@ -1,0 +1,47 @@
+[
+    {
+        "id": 1,
+        "title": "Title-id-1",
+        "descr": "Description-id-1",
+        "data": [
+            {
+                "id": 2,
+                "parent": 1,
+                "title": "Title-id-2",
+                "descr": "Description-id-2",
+                "data": [
+                    {
+                        "id": 3,
+                        "parent": 2,
+                        "title": "Title-id-3",
+                        "descr": "Description-id-3"
+                    },
+                    {
+                        "id": 4,
+                        "parent": 2,
+                        "title": "Title-id-4",
+                        "descr": "Description-id-4"
+                    },
+                    {
+                        "id": 5,
+                        "parent": 2,
+                        "title": "Title-id-5",
+                        "descr": "Description-id-5"
+                    }
+                ]
+            },
+            {
+                "id": 6,
+                "parent": 1,
+                "title": "Title-id-6",
+                "descr": "Description-id-6"
+            },
+            {
+                "id": 7,
+                "parent": 1,
+                "title": "Title-id-7",
+                "descr": "Description-id-7"
+            }
+        ]
+    }
+]
