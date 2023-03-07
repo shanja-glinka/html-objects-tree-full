@@ -1,19 +1,51 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    
+
     <link rel="icon" type="image/png" href="./assets/img/favicon.png">
 
     <link rel="stylesheet" href="./assets/fonts/fonts.css">
     <link rel="stylesheet" href="./assets/css/styles.css">
-    
-    <title>Test Job Solution for KIT Job - Admin page view</title>
+
+    <title>Test Job Solution for KIT Job - Admin login</title>
 </head>
+
 <body>
-    
+
+    <main class="container">
+
+        <h1>/Admin</h1>
+        <a href="./index.html">/Index</a>
+
+        <div class="object-tree-process">
+            <p></p>
+        </div>
+        <form method="POST" class="form">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" name="username" required="required">
+            </div>
+            <div class="form-group">
+                <label for="username">Password</label>
+                <input type="password" name="password" required="required">
+            </div>
+            <div class="form-action">
+                <button type="submit">Log In</button>
+            </div>
+        </form>
+
+
+    </main>
+
+    <script>
+        const adminView = true;
+    </script>
+    <script type="text/javascript" src="./assets/js/app.js"></script>
 </body>
+
 </html>

@@ -300,3 +300,55 @@ ul {
         gap: 10px;
     }
 }
+
+
+
+
+.form {
+    position: relative;
+    margin: 0 auto;
+    width: 400px;
+    background: $tree-background;
+    box-shadow: $tree-boxshdow;
+    border-radius: 12px;
+    padding: 50px 30px;
+
+    .form-group {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        width: 100%;
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        input {
+            outline: none;
+            display: block;
+            width: 100%;
+            border: 0;
+            border-radius: 4px;
+            padding: 12px 20px;
+        }
+    }
+
+    .form-action {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+
+        
+        button {
+            outline: none;
+            background: $subgroup-background;
+            border: 0;
+            border-radius: 12px;
+            padding: 12px 30px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+    }
+}

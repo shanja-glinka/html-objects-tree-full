@@ -158,12 +158,12 @@ class RenameItem extends ItemAction {
         });
 
         // IGNORE_AJAX
-        this.saveSuccess(id, {
-            "id": 8,
-            // "parent": 1,
-            "title": this.getDescrElement(id).querySelector('input').value,
-            "descr": this.getDescrElement(id).querySelector('textarea').value,
-        });
+        // this.saveSuccess(id, {
+        //     "id": 8,
+        //     // "parent": 1,
+        //     "title": this.getDescrElement(id).querySelector('input').value,
+        //     "descr": this.getDescrElement(id).querySelector('textarea').value,
+        // });
     }
 
     saveSuccess(id, responce) {
@@ -334,12 +334,12 @@ class AddItem extends ItemAction {
         });
 
         // IGNORE_AJAX
-        this.saveItemSuccess({
-            "id": 8,
-            "parent": this.getItemParent(),
-            "title": this.getDescrElement(-1).querySelector('input').value,
-            "descr": this.getDescrElement(-1).querySelector('textarea').value,
-        });
+        // this.saveItemSuccess({
+        //     "id": new Date().getTime(),
+        //     "parent": this.getItemParent(),
+        //     "title": this.getDescrElement(-1).querySelector('input').value,
+        //     "descr": this.getDescrElement(-1).querySelector('textarea').value,
+        // });
     }
 
 
@@ -353,10 +353,16 @@ class AddItem extends ItemAction {
     }
 
     itemInsert(parent, data, actionButtons) {
-        let item = this.instalItem(data, actionButtons).create();
+        let item = this.instalItem(data, actionButtons).create(actionButtons);
 
 
         parent.insertBefore(item, this.getElementByData('data-parent-id', data.parent));
+
+        if (actionButtons) {
+            let treestruct = new TreeStruct(data, actionButtons);
+            item.appendChild(treestruct.createAddSubgroup(data.id));
+        }
+        return item;
     }
 
 
@@ -368,7 +374,7 @@ class AddItem extends ItemAction {
 
         let admin = typeof adminView === 'boolean' ? adminView : false;
 
-        if (responce.parent === -1) {
+        if (responce.parent == -1) {
             this.itemInsert(document.querySelector('.group-tree-container'), responce, admin);
 
         } else {
@@ -383,18 +389,16 @@ class AddItem extends ItemAction {
             });
 
             if (tinsertTo !== null) {
-
                 this.itemInsert(tinsertTo, responce, admin);
 
-                !tinsertTo.classList.contains('active') ? tinsertTo.classList.add('active') : null;
             } else {
                 let treestruct = new TreeStruct(responce, admin);
 
                 parentElement.appendChild(treestruct.createSubStruct(this.instalItem(responce, admin), null));
             }
-
-            this.cancel();
         }
+
+        this.cancel();
 
     }
 
@@ -639,6 +643,10 @@ class TreeStruct extends HtmlWorker {
 
         this.struct = struct;
         this.actionButtons = actionButtons;
+
+        if (typeof this.struct.id === 'undefined')
+            this.struct.id = -1;
+
     }
 
     createAddSubgroup(id) {
@@ -674,16 +682,15 @@ class TreeStruct extends HtmlWorker {
                     parent = el.parent
 
 
-                if (this.actionButtons === true) {
+                if (this.actionButtons === true)
                     it.appendChild(this.createAddSubgroup(el.id));
-                }
-
 
 
                 ul.appendChild(it);
             });
 
-        ul.appendChild(new StructItemAdd().create(parent));
+        if (this.actionButtons === true)
+            ul.appendChild(new StructItemAdd().create(parent));
 
         return ul;
     }
@@ -691,6 +698,12 @@ class TreeStruct extends HtmlWorker {
 
     createTree() {
         let newStruct = this.createElement('ul', { 'class': 'group-tree-container' });
+
+        if (this.struct.id === -1) {
+            if (this.actionButtons === true)
+                newStruct.appendChild(new StructItemAdd().create(typeof this.struct.parent !== 'undefined' ? this.struct.parent : -1));
+            return newStruct;
+        }
 
         let dropDown = typeof this.struct.data !== 'undefined';
 
@@ -701,8 +714,6 @@ class TreeStruct extends HtmlWorker {
             actionButtons: this.actionButtons
         }).create(dropDown);
 
-
-        // newStruct.appendChild(typeof this.struct.data === 'undefined' ? item.create() : this.createSubStruct(item, this.struct.data));
 
         if (dropDown)
             item.appendChild(this.createSubStruct(this.struct.data, this.actionButtons));
@@ -731,6 +742,9 @@ class TreeRender {
     }
 
     render() {
+        if (!this.container)
+            return console.log('Selector .object-tree is not found');
+
         if (Array.isArray(this.struct))
             this.struct.forEach(struct => {
                 this.container.appendChild(this.extractStruct(struct));
@@ -739,7 +753,6 @@ class TreeRender {
 }
 
 
-const adminView = true;
 
 const defaultAssetPath = '/assets';
 const defaultRoutes = {
@@ -756,6 +769,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'url': defaultRoutes.testObjectsTree,
         'json': true,
         'callback': (respone) => {
+            respone = {};
 
             if (!Array.isArray(respone))
                 respone = [respone];
