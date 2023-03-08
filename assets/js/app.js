@@ -28,30 +28,30 @@ const ajax = (request) => {
         data = tempdata.slice(1);
     }
 
-    // try {
-    let xhr = new (this.XMLHttpRequest || ActiveXObject)('MSXML2.XMLHTTP.3.0');
-    xhr.open(method, url, 1);
+    try {
+        let xhr = new (this.XMLHttpRequest || ActiveXObject)('MSXML2.XMLHTTP.3.0');
+        xhr.open(method, url, 1);
 
-    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 
-    xhr.onreadystatechange = () => {
-        // try {
-        if (xhr.readyState > 3 && callback) {
-            callback((json === true ? JSON.parse(xhr.responseText) : xhr.responseText), xhr);
-        }
-        // } catch (e) {
-        //     if (onerror)
-        //         onerror(e, xhr.responseText);
-        //     console.log(e);
-        // }
-    };
-    xhr.send(data)
-    // } catch (e) {
-    // if (onerror)
-    //     onerror(e);
-    // console.log(e);
-    // }
+        xhr.onreadystatechange = () => {
+            try {
+                if (xhr.readyState > 3 && callback) {
+                    callback((json === true ? JSON.parse(xhr.responseText) : xhr.responseText), xhr);
+                }
+            } catch (e) {
+                if (onerror)
+                    onerror(e, xhr.responseText);
+                console.log(e);
+            }
+        };
+        xhr.send(data)
+    } catch (e) {
+        if (onerror)
+            onerror(e);
+        console.log(e);
+    }
 };
 
 

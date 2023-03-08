@@ -14,6 +14,8 @@ Don't forget to switch sql_mode= "" in MySQL
 
 # Usage
 
+The `description` is opened by clicking on the group/item name
+
 ```http
   GET /Index
   GET /admin
