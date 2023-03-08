@@ -1,0 +1,16 @@
+<div class="object-tree-process">
+    <p><? isset($error) ? print($error) : null ?></p>
+</div>
+<form method="POST" class="form" action="/admin/login">
+    <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" name="username" required="required">
+    </div>
+    <div class="form-group">
+        <label for="username">Password</label>
+        <input type="password" name="password" required="required">
+    </div>
+    <div class="form-action">
+        <button type="submit">Log In</button>
+    </div>
+</form>

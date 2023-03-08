@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+
+    <link rel="stylesheet" href="/assets/fonts/fonts.css">
+    <link rel="stylesheet" href="/assets/css/styles.css">
+
+    <title>Test Job Solution for KIT Job - Admin page view</title>
+</head>
+
+<body>
+
+    <main class="container">
+
+        <h1>/Admin <? if ($accessLevel > 0) {?> <a href="/admin?signout"><small>/sign out</small></a> <?}?></h1>
+        <a href="/index">/Index</a>
+
+        <?
+            if (isset($_GET['create_user']))
+                include('form.signin.html');
+            else
+                include($accessLevel > 0 ? 'struct.html' : 'form.login.html');
+        ?>
+
+
+    </main>
+
+    <script>
+        const adminView = true;
+    </script>
+    <script type="text/javascript" src="/assets/js/app.js"></script>
+</body>
+
+</html>

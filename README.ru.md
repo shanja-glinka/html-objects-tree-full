@@ -1,8 +1,8 @@
 # studious-octo-waddle
 
-Test Job Solution for KIT Job
+Решение тестового задания для KIT
 
-# Requirements
+# Требования к срерверу
 
 For usage:
 * PHP 5.6-x64
@@ -10,9 +10,9 @@ For usage:
 * MySQL 5.6-x64
 
 
-Don't forget to switch sql_mode= "" in MySQL
+В MySQL требуется отключить строгий режим `sql_mode= ""`
 
-# Usage
+# Использование
 
 ```http
   GET /Index
@@ -60,19 +60,20 @@ API:
 
 
 
-# Installation
-The database configuration is in
+# Установка
+Конфигурационный файл находится в дирректории `/assets/data/`
 
 ```bash
   /assets/data/config.php
 ```
 
-Use the key `connection` to make changes to the database 
+Для соединения с бд измени ключ `connection` 
 
 
-Download the database from
+Загрузи базу данных из дирректории `/assets/data/`
 
 ```bash
   /assets/data/studious-octo-waddle.sql
 ```
-Don't forget to switch sql_mode= "" in MySQL
+
+В MySQL требуется отключить строгий режим `sql_mode= ""`

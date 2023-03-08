@@ -28,30 +28,30 @@ const ajax = (request) => {
         data = tempdata.slice(1);
     }
 
-    try {
-        let xhr = new (this.XMLHttpRequest || ActiveXObject)('MSXML2.XMLHTTP.3.0');
-        xhr.open(method, url, 1);
+    // try {
+    let xhr = new (this.XMLHttpRequest || ActiveXObject)('MSXML2.XMLHTTP.3.0');
+    xhr.open(method, url, 1);
 
-        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-        xhr.setRequestHeader('Content-type', (json !== true ? 'application/x-www-form-urlencoded' : 'application/json'));
+    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 
-        xhr.onreadystatechange = () => {
-            try {
-                if (xhr.readyState > 3 && callback) {
-                    callback((json === true ? JSON.parse(xhr.responseText) : xhr.responseText), xhr);
-                }
-            } catch (e) {
-                if (onerror)
-                    onerror(e, xhr.responseText);
-                console.log(e);
-            }
-        };
-        xhr.send(data)
-    } catch (e) {
-        if (onerror)
-            onerror(e);
-        console.log(e);
-    }
+    xhr.onreadystatechange = () => {
+        // try {
+        if (xhr.readyState > 3 && callback) {
+            callback((json === true ? JSON.parse(xhr.responseText) : xhr.responseText), xhr);
+        }
+        // } catch (e) {
+        //     if (onerror)
+        //         onerror(e, xhr.responseText);
+        //     console.log(e);
+        // }
+    };
+    xhr.send(data)
+    // } catch (e) {
+    // if (onerror)
+    //     onerror(e);
+    // console.log(e);
+    // }
 };
 
 
@@ -142,7 +142,7 @@ class RenameItem extends ItemAction {
         this.setProcess('processed...');
 
         ajax({
-            url: defaultRoutes.renameGroupSave + '/' + id,
+            url: defaultRoutes.renameGroup + '/' + id,
             data: {
                 'title': this.getDescrElement(id).querySelector('input').value,
                 'descr': this.getDescrElement(id).querySelector('textarea').value,
@@ -156,14 +156,6 @@ class RenameItem extends ItemAction {
                 this.saveError(id, responce);
             }
         });
-
-        // IGNORE_AJAX
-        // this.saveSuccess(id, {
-        //     "id": 8,
-        //     // "parent": 1,
-        //     "title": this.getDescrElement(id).querySelector('input').value,
-        //     "descr": this.getDescrElement(id).querySelector('textarea').value,
-        // });
     }
 
     saveSuccess(id, responce) {
@@ -179,7 +171,7 @@ class RenameItem extends ItemAction {
     }
 
     saveError(id, responce) {
-        this.setProcess('item - ' + id + ' - save failed');
+        this.setProcess('item - ' + id + ' - save failed. ' + responce);
     }
 
 
@@ -207,7 +199,7 @@ class RemoveItem extends ItemAction {
         this.setProcess('processed...');
 
         ajax({
-            url: defaultRoutes.removeGroupSave + '/' + id,
+            url: defaultRoutes.removeGroup + '/' + id,
             json: true,
             method: 'DELETE',
             callback: (responce) => {
@@ -226,13 +218,26 @@ class RemoveItem extends ItemAction {
 
         let item = this.getElementByData('data-group-id', id);
 
+        if (!item)
+            return;
+
         item.parentElement.removeChild(item);
 
         new ItemDescr().removeDescr(id);
+
+        this.recreate();
+    }
+
+    recreate() {
+        if (!document.querySelector('.group-tree-container .group-item')) {
+            document.querySelector('.tree-drescr').innerHTML = '';
+            document.querySelector('.group-tree-container').parentElement.removeChild(document.querySelector('.group-tree-container'));
+            defaultLoader();
+        }
     }
 
     removeError(id, responce) {
-        this.setProcess('item - ' + id + ' - remove failed');
+        this.setProcess('item - ' + id + ' - remove failed. ' + responce);
     }
 }
 
@@ -332,14 +337,6 @@ class AddItem extends ItemAction {
                 this.saveItemError(responce);
             }
         });
-
-        // IGNORE_AJAX
-        // this.saveItemSuccess({
-        //     "id": new Date().getTime(),
-        //     "parent": this.getItemParent(),
-        //     "title": this.getDescrElement(-1).querySelector('input').value,
-        //     "descr": this.getDescrElement(-1).querySelector('textarea').value,
-        // });
     }
 
 
@@ -354,7 +351,6 @@ class AddItem extends ItemAction {
 
     itemInsert(parent, data, actionButtons) {
         let item = this.instalItem(data, actionButtons).create(actionButtons);
-
 
         parent.insertBefore(item, this.getElementByData('data-parent-id', data.parent));
 
@@ -376,7 +372,6 @@ class AddItem extends ItemAction {
 
         if (responce.parent == -1) {
             this.itemInsert(document.querySelector('.group-tree-container'), responce, admin);
-
         } else {
             let parentElement = this.getElementByData('data-group-id', responce.parent);
             let tinsertTo = null;
@@ -392,10 +387,34 @@ class AddItem extends ItemAction {
                 this.itemInsert(tinsertTo, responce, admin);
 
             } else {
-                let treestruct = new TreeStruct(responce, admin);
 
-                parentElement.appendChild(treestruct.createSubStruct(this.instalItem(responce, admin), null));
+                responce.data = responce;
+                let treestruct = new TreeStruct(responce, admin);
+                let substruct = treestruct.createSubStruct([responce]);
+
+                parentElement.appendChild(substruct);
+
+                if (!parentElement.firstChild.querySelector('.icon-drop-down')) {
+                    let htmlWorker = new HtmlWorker();
+                    let element = htmlWorker.createElement('i', { 'class': 'icon icon-drop-down' });
+
+                    element.addEventListener('click', () => {
+                        new TreeActions().dropDownToggle(responce.parent);
+                    });
+
+                    let insertBefore = parentElement.firstChild.querySelector('.group-actions');
+
+                    if (insertBefore)
+                        parentElement.firstChild.insertBefore(element, insertBefore);
+                    else
+                        parentElement.firstChild.appendChild(element);
+                }
             }
+        }
+
+        let creator = document.querySelector('[data-parent-id="-1"]');
+        if (creator) {
+            creator.parentElement.removeChild(creator);
         }
 
         this.cancel();
@@ -403,7 +422,7 @@ class AddItem extends ItemAction {
     }
 
     saveItemError(responce) {
-        this.setProcess('item was not saved');
+        this.setProcess(responce);
     }
 
     cancel() {
@@ -517,6 +536,10 @@ class ItemDescr extends HtmlWorker {
 
     removeDescr(id) {
         let item = this.getDescrContainer().querySelector('[data-descr-id="' + id + '"]');
+
+        if (!item)
+            return;
+
         item.parentElement.removeChild(item);
     }
 }
@@ -655,17 +678,14 @@ class TreeStruct extends HtmlWorker {
         return ul;
     }
 
-    createSubStruct(data = null) {
+    createSubStruct(data = null, lastid = -1) {
 
-        if (!Array.isArray(this.struct.data))
-            return;
-
-        let parent = -1;
+        let parent = lastid;
         let ul = this.createElement('ul', { 'class': 'sub-group' });
 
-        if (data !== null)
+        if (data !== null && Array.isArray(data))
             data.forEach(el => {
-                let dropDown = typeof el.data !== 'undefined';
+                let dropDown = typeof el.data !== 'undefined' && el.data !== null;
 
                 let it = new StructItems({
                     id: el.id,
@@ -674,16 +694,13 @@ class TreeStruct extends HtmlWorker {
                     actionButtons: this.actionButtons
                 }).create(dropDown || this.actionButtons);
 
-                if (dropDown)
-                    it.appendChild(this.createSubStruct(el.data));
+                if (dropDown || this.actionButtons) {
+                    it.appendChild(this.createSubStruct(el.data, el.id));
+                }
 
 
                 if (typeof el.parent !== 'undefined')
                     parent = el.parent
-
-
-                if (this.actionButtons === true)
-                    it.appendChild(this.createAddSubgroup(el.id));
 
 
                 ul.appendChild(it);
@@ -705,7 +722,7 @@ class TreeStruct extends HtmlWorker {
             return newStruct;
         }
 
-        let dropDown = typeof this.struct.data !== 'undefined';
+        let dropDown = typeof this.struct.data !== 'undefined' && this.struct.data !== null;
 
         let item = new StructItems({
             id: this.struct.id,
@@ -720,7 +737,7 @@ class TreeStruct extends HtmlWorker {
 
         newStruct.appendChild(item);
         if (this.actionButtons === true)
-            newStruct.appendChild(new StructItemAdd().create(typeof this.struct.parent !== 'undefined' ? this.struct.parent : -1));
+            newStruct.appendChild(new StructItemAdd().create(typeof this.struct.parent !== 'undefined' && this.struct.parent != -1 ? this.struct.parent : this.struct.id));
 
 
         return newStruct;
@@ -745,10 +762,14 @@ class TreeRender {
         if (!this.container)
             return console.log('Selector .object-tree is not found');
 
-        if (Array.isArray(this.struct))
+        if (Array.isArray(this.struct)) {
+            if (this.struct.length == 0)
+                this.struct = [{}];
+
             this.struct.forEach(struct => {
                 this.container.appendChild(this.extractStruct(struct));
             });
+        }
     }
 }
 
@@ -757,19 +778,18 @@ class TreeRender {
 const defaultAssetPath = '/assets';
 const defaultRoutes = {
     'testObjectsTree': defaultAssetPath + '/var/objectsTree-example.json',
-    'renameGroupSave': '/struct',
-    'removeGroupSave': '/struct',
+    'getGroup': '/struct',
+    'renameGroup': '/struct',
+    'removeGroup': '/struct',
     'addGroup': '/struct'
 }
 
 
-
-document.addEventListener('DOMContentLoaded', () => {
+const defaultLoader = () => {
     ajax({
-        'url': defaultRoutes.testObjectsTree,
+        'url': defaultRoutes.getGroup,
         'json': true,
         'callback': (respone) => {
-            respone = {};
 
             if (!Array.isArray(respone))
                 respone = [respone];
@@ -782,4 +802,8 @@ document.addEventListener('DOMContentLoaded', () => {
             objectRender.render();
         }
     });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    defaultLoader();
 });
