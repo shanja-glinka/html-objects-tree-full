@@ -141,21 +141,28 @@ class RenameItem extends ItemAction {
     save(id) {
         this.setProcess('processed...');
 
-        ajax({
-            url: defaultRoutes.renameGroup + '/' + id,
-            data: {
+        if (ignoreServer) {
+            this.saveSuccess(id, {
+                'id': id,
                 'title': this.getDescrElement(id).querySelector('input').value,
-                'descr': this.getDescrElement(id).querySelector('textarea').value,
-            },
-            json: true,
-            method: 'PUT',
-            callback: (responce) => {
-                this.saveSuccess(id, responce);
-            },
-            onerror: (responce) => {
-                this.saveError(id, responce);
-            }
-        });
+                'descr': this.getDescrElement(id).querySelector('textarea').value
+            });
+        } else
+            ajax({
+                url: defaultRoutes.renameGroup + '/' + id,
+                data: {
+                    'title': this.getDescrElement(id).querySelector('input').value,
+                    'descr': this.getDescrElement(id).querySelector('textarea').value,
+                },
+                json: true,
+                method: 'PUT',
+                callback: (responce) => {
+                    this.saveSuccess(id, responce);
+                },
+                onerror: (responce) => {
+                    this.saveError(id, responce);
+                }
+            });
     }
 
     saveSuccess(id, responce) {
@@ -197,20 +204,23 @@ class RemoveItem extends ItemAction {
 
 
         this.setProcess('processed...');
+        if (ignoreServer) {
+            this.removeSuccess(id, {
+                'id': id
+            });
+        } else
+            ajax({
+                url: defaultRoutes.removeGroup + '/' + id,
+                json: true,
+                method: 'DELETE',
+                callback: (responce) => {
+                    this.removeSuccess(id);
+                },
+                onerror: (responce) => {
+                    this.removeError(id, responce);
+                }
+            });
 
-        ajax({
-            url: defaultRoutes.removeGroup + '/' + id,
-            json: true,
-            method: 'DELETE',
-            callback: (responce) => {
-                this.removeSuccess(id);
-            },
-            onerror: (responce) => {
-                this.removeError(id, responce);
-            }
-        });
-
-        this.removeSuccess(id);
     }
 
     removeSuccess(id) {
@@ -321,22 +331,30 @@ class AddItem extends ItemAction {
     saveItem() {
         this.setProcess('process...');
 
-        ajax({
-            url: defaultRoutes.addGroup,
-            json: true,
-            data: {
+        if (ignoreServer) {
+            this.saveItemSuccess({
+                'id': new Date().getTime(),
                 'parent': this.getItemParent(),
                 'title': this.getDescrElement(-1).querySelector('input').value,
                 'descr': this.getDescrElement(-1).querySelector('textarea').value
-            },
-            method: 'POST',
-            callback: (responce) => {
-                this.saveItemSuccess(responce);
-            },
-            onerror: (responce) => {
-                this.saveItemError(responce);
-            }
-        });
+            });
+        } else
+            ajax({
+                url: defaultRoutes.addGroup,
+                json: true,
+                data: {
+                    'parent': this.getItemParent(),
+                    'title': this.getDescrElement(-1).querySelector('input').value,
+                    'descr': this.getDescrElement(-1).querySelector('textarea').value
+                },
+                method: 'POST',
+                callback: (responce) => {
+                    this.saveItemSuccess(responce);
+                },
+                onerror: (responce) => {
+                    this.saveItemError(responce);
+                }
+            });
     }
 
 
@@ -371,7 +389,15 @@ class AddItem extends ItemAction {
         let admin = typeof adminView === 'boolean' ? adminView : false;
 
         if (responce.parent == -1) {
-            this.itemInsert(document.querySelector('.group-tree-container'), responce, admin);
+            // this.itemInsert(document.querySelector('.group-tree-container [data-root-create="-1"]'), responce, admin);
+            let failedParent = document.querySelector('.group-tree-container [data-root-create="-1"]').closest('.group-tree-container');
+            failedParent.parentElement.removeChild(failedParent);
+
+            let objectRender = new TreeRender({
+                struct: [responce],
+                actionButtons: admin
+            });
+            objectRender.render();
         } else {
             let parentElement = this.getElementByData('data-group-id', responce.parent);
             let tinsertTo = null;
@@ -387,28 +413,7 @@ class AddItem extends ItemAction {
                 this.itemInsert(tinsertTo, responce, admin);
 
             } else {
-
-                responce.data = responce;
-                let treestruct = new TreeStruct(responce, admin);
-                let substruct = treestruct.createSubStruct([responce]);
-
-                parentElement.appendChild(substruct);
-
-                if (!parentElement.firstChild.querySelector('.icon-drop-down')) {
-                    let htmlWorker = new HtmlWorker();
-                    let element = htmlWorker.createElement('i', { 'class': 'icon icon-drop-down' });
-
-                    element.addEventListener('click', () => {
-                        new TreeActions().dropDownToggle(responce.parent);
-                    });
-
-                    let insertBefore = parentElement.firstChild.querySelector('.group-actions');
-
-                    if (insertBefore)
-                        parentElement.firstChild.insertBefore(element, insertBefore);
-                    else
-                        parentElement.firstChild.appendChild(element);
-                }
+                this.createNewStruct(parentElement, responce, admin);
             }
         }
 
@@ -419,6 +424,30 @@ class AddItem extends ItemAction {
 
         this.cancel();
 
+    }
+
+    createNewStruct(parentElement, responce, admin) {
+        responce.data = responce;
+        let treestruct = new TreeStruct(responce, admin);
+        let substruct = treestruct.createSubStruct([responce]);
+
+        parentElement.appendChild(substruct);
+
+        if (!parentElement.firstChild.querySelector('.icon-drop-down')) {
+            let htmlWorker = new HtmlWorker();
+            let element = htmlWorker.createElement('i', { 'class': 'icon icon-drop-down' });
+
+            element.addEventListener('click', () => {
+                new TreeActions().dropDownToggle(responce.parent);
+            });
+
+            let insertBefore = parentElement.firstChild.querySelector('.group-actions');
+
+            if (insertBefore)
+                parentElement.firstChild.insertBefore(element, insertBefore);
+            else
+                parentElement.firstChild.appendChild(element);
+        }
     }
 
     saveItemError(responce) {
@@ -549,9 +578,13 @@ class StructItemAdd extends HtmlWorker {
 
     create(parentId) {
         let element = this.createElement('li', {
-            'class': 'group-item-add',
-            'data-parent-id': parentId
+            'class': 'group-item-add'
         });
+
+        if (parentId == -1)
+            element.setAttribute('data-root-create', parentId);
+        else
+            element.setAttribute('data-parent-id', parentId);
 
         let groupTitle = this.createElement('div', { 'class': 'group-title' });
 
@@ -750,7 +783,7 @@ class TreeRender {
         this.struct = params.struct;
         this.actionButtons = typeof params.actionButtons === 'boolean' ? params.actionButtons : false;
 
-        this.container = document.querySelector('.object-tree');
+        this.container = document.querySelector('.object-tree .tree-roots');
     }
 
     extractStruct(struct) {
@@ -760,7 +793,7 @@ class TreeRender {
 
     render() {
         if (!this.container)
-            return console.log('Selector .object-tree is not found');
+            return console.log('Selector .object-tree .tree-roots is not found');
 
         if (Array.isArray(this.struct)) {
             if (this.struct.length == 0)
@@ -769,12 +802,15 @@ class TreeRender {
             this.struct.forEach(struct => {
                 this.container.appendChild(this.extractStruct(struct));
             });
+
+            if (this.actionButtons === true)
+                this.container.appendChild(this.extractStruct({}));
         }
     }
 }
 
 
-
+const ignoreServer = false;
 const defaultAssetPath = '/assets';
 const defaultRoutes = {
     'testObjectsTree': defaultAssetPath + '/var/objectsTree-example.json',
@@ -789,13 +825,13 @@ const defaultLoader = () => {
     ajax({
         'url': defaultRoutes.getGroup,
         'json': true,
-        'callback': (respone) => {
+        'callback': (responce) => {
 
-            if (!Array.isArray(respone))
-                respone = [respone];
+            if (!Array.isArray(responce))
+                respone = [responce];
 
             let objectRender = new TreeRender({
-                struct: respone,
+                struct: responce,
                 actionButtons: typeof adminView === 'boolean' ? adminView : false
             });
 

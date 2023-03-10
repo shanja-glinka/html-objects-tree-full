@@ -79,3 +79,19 @@ API:
 ```
 
 В MySQL требуется отключить строгий режим `sql_mode= ""`
+
+
+  Для теста используй логин `admin` и пароль `admin`
+```http
+  GET /admin
+```
+
+Или создай своего пользователя
+```http
+  GET /admin?create_user
+```
+
+Для использования офлайн режима включи параметр `ignoreServer = false` в 
+```bash
+  /assets/js/app.js
+```

@@ -35,9 +35,14 @@ ul {
 }
 .container .object-tree {
   display: flex;
-  flex-direction: row-reverse;
+  flex-direction: row;
   width: 100%;
   gap: 20px;
+}
+.container .object-tree .tree-roots {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
 .group-tree-container {

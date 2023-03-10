@@ -78,3 +78,18 @@ Download the database from
   /assets/data/studious-octo-waddle.sql
 ```
 Don't forget to switch sql_mode= "" in MySQL
+
+For the test, use the login `admin` and the password `admin` in
+```http
+  GET /admin
+```
+
+Or create your user
+```http
+  GET /admin?create_user
+```
+
+Enable `ignoreServer = false` to use offline mode
+```bash
+  /assets/js/app.js
+```
