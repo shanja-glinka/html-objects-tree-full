@@ -30,7 +30,6 @@ class Pages extends \System\Controllers
     
     public function Login()
     {
-
         if ($this->request->isPost()) {
             $username = $this->request->val('username', 'POST');
             $password = $this->request->val('password', 'POST');

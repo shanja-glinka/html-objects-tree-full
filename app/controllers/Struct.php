@@ -13,6 +13,7 @@ class Struct extends \System\Controllers
 
         $this->responce->setContentType('json');
         $this->responce->useFormatResponce(false);
+
     }
 
     public function Select($structId = -1)
@@ -25,6 +26,8 @@ class Struct extends \System\Controllers
 
     public function Update($structId)
     {
+        $this->auth->setAccessLevel(1);
+
         $this->request->requireValue(['title', 'descr']);
 
         if ($this->request->val('title') === '')
@@ -37,6 +40,8 @@ class Struct extends \System\Controllers
 
     public function Remove($structId)
     {
+        $this->auth->setAccessLevel(1);
+
         $callResult = $this->callMethod('Struct', 'Remove', array($structId));
 
         return $this->responce->withJson($callResult);
@@ -44,6 +49,8 @@ class Struct extends \System\Controllers
 
     public function Insert()
     {
+        $this->auth->setAccessLevel(1);
+        
         $this->request->requireValue(['title', 'parent']);
 
         if ($this->request->val('title') === '')
