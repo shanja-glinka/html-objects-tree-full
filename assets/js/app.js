@@ -28,30 +28,24 @@ const ajax = (request) => {
         data = tempdata.slice(1);
     }
 
-    try {
-        let xhr = new (this.XMLHttpRequest || ActiveXObject)('MSXML2.XMLHTTP.3.0');
-        xhr.open(method, url, 1);
+    let xhr = new (this.XMLHttpRequest || ActiveXObject)('MSXML2.XMLHTTP.3.0');
+    xhr.open(method, url, 1);
 
-        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 
-        xhr.onreadystatechange = () => {
-            try {
-                if (xhr.readyState > 3 && callback) {
-                    callback((json === true ? JSON.parse(xhr.responseText) : xhr.responseText), xhr);
-                }
-            } catch (e) {
-                if (onerror)
-                    onerror(e, xhr.responseText);
-                console.log(e);
+    xhr.onreadystatechange = () => {
+        try {
+            if (xhr.readyState > 3 && callback) {
+                callback((json === true ? JSON.parse(xhr.responseText) : xhr.responseText), xhr);
             }
-        };
-        xhr.send(data)
-    } catch (e) {
-        if (onerror)
-            onerror(e);
-        console.log(e);
-    }
+        } catch (e) {
+            if (onerror)
+                onerror(e, xhr.responseText);
+            console.log(e);
+        }
+    };
+    xhr.send(data)
 };
 
 
@@ -231,19 +225,14 @@ class RemoveItem extends ItemAction {
         if (!item)
             return;
 
+        let rootElement = item.closest('.group-tree-container');
         item.parentElement.removeChild(item);
+
+        if (!rootElement.querySelector('.group-item'))
+            rootElement.parentElement.removeChild(rootElement);
 
         new ItemDescr().removeDescr(id);
 
-        this.recreate();
-    }
-
-    recreate() {
-        if (!document.querySelector('.group-tree-container .group-item')) {
-            document.querySelector('.tree-drescr').innerHTML = '';
-            document.querySelector('.group-tree-container').parentElement.removeChild(document.querySelector('.group-tree-container'));
-            defaultLoader();
-        }
     }
 
     removeError(id, responce) {
@@ -810,7 +799,10 @@ class TreeRender {
 }
 
 
-const ignoreServer = false;
+console.log(window.ignoreServer);
+if (typeof ignoreServer === 'undefined')
+    window.ignoreServer = false;
+
 const defaultAssetPath = '/assets';
 const defaultRoutes = {
     'testObjectsTree': defaultAssetPath + '/var/objectsTree-example.json',
@@ -823,7 +815,7 @@ const defaultRoutes = {
 
 const defaultLoader = () => {
     ajax({
-        'url': defaultRoutes.getGroup,
+        'url': ignoreServer === true ? defaultRoutes.testObjectsTree : defaultRoutes.getGroup,
         'json': true,
         'callback': (responce) => {
 
